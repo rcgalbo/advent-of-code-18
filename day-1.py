@@ -43,6 +43,28 @@ class Sequence:
     def get_frequency(self):
         return self.frequencies[-1]
 
+def search_duplicates_nv(data):
+    freq = {0}
+    i = 0
+    f = 0
+    fw = []
+    while not fw:
+        f += data[i]
+        if f in freq:
+            return f
+        else:
+            freq.add(f)
+
+        if i < len(data)-1:
+            i+=1
+        else:
+            i = 0
+
+# assert search_duplicates_nv([+1, -1]) == 0
+# assert search_duplicates_nv([+3, +3, +4, -2, -4]) == 10
+# assert search_duplicates_nv([-6, +3, +8, +5, -6]) == 5 
+# assert search_duplicates_nv([+7, +7, -2, -7, -4]) == 14
+
 
 def search_duplicates(data):
     frequencies = [0] + list(accumulate(data))
@@ -61,33 +83,6 @@ def search_duplicates(data):
 # assert search_duplicates([+3, +3, +4, -2, -4]) == 10
 # assert search_duplicates([-6, +3, +8, +5, -6]) == 5 
 # assert search_duplicates([+7, +7, -2, -7, -4]) == 14
-
-def loop_frequencies(data):
-    freq = {0}
-    i = 0
-    f = 0
-    fw = []
-    while not fw:
-        f += data[i]
-        if f in freq:
-            return f
-        else:
-            freq.add(f)
-
-        if i < len(data)-1:
-            i+=1
-        else:
-            i = 0
-
-def search_duplicates_nv(data):
-    return loop_frequencies(data)
-
-assert search_duplicates_nv([+1, -1]) == 0
-assert search_duplicates_nv([+3, +3, +4, -2, -4]) == 10
-assert search_duplicates_nv([-6, +3, +8, +5, -6]) == 5 
-assert search_duplicates_nv([+7, +7, -2, -7, -4]) == 14
-
-
 
 
 
