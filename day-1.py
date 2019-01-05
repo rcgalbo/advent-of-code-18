@@ -1107,4 +1107,4 @@ if __name__ == "__main__":
     sequence = Sequence(smpl)
     # print(get_frequency(smpl))
     print(search_duplicates(sequence.data))
-    print(loop_frequencies(sequence.data))        
+    print(search_duplicates_nv(sequence.data))        
