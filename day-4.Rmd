@@ -1,0 +1,98 @@
+---
+title: "R Notebook"
+output: html_notebook
+editor_options: 
+  chunk_output_type: console
+---
+
+use tidy data to extract timestamp, event
+make data into tidy format guard_id, start_sleep, wake_up
+
+```{r}
+library(tidyverse)
+library(lubridate)
+
+read_delim('data/data-day4.txt', '\n',col_names = FALSE) %>% 
+  separate(X1, c('ts','ev'), sep = ']') %>% 
+  mutate(ev=str_sub(ev,2),
+         ts=ymd_hm(str_sub(ts,2)),
+         guard = str_extract(ev,'(\\d[0-9.]*)')) %>% 
+  arrange(ts) %>% 
+  fill(guard, .direction='down')%>%
+  filter(!str_detect(ev,"Guard")) %>% 
+  arrange(guard,ts)-> df
+```
+
+data format:
+timestamp, falls asleep/wakes up, id
+
+note: no hours are 23
+
+find the biggest sleeper
+
+```{r}
+sleep_time <- df %>% 
+  mutate(dur = ts - lag(ts)) %>% 
+  filter(ev == 'wakes up') 
+
+sleep_time%>% 
+  group_by(guard) %>% 
+  summarise(sleep = sum(dur)) %>% 
+  arrange(desc(sleep))
+```
+
+
+find the minute slept the most
+
+```{r}
+to_vec <- function(start,stop)
+  c(start:stop)
+
+df %>% 
+  filter(guard == 733) %>% 
+  mutate(start = minute(ts),
+         dur = ts - lag(ts),
+         dt =  lead(as.numeric(dur)),
+         end = start + dt) %>% 
+  filter(ev == 'falls asleep') %>%
+  select(start,end) %>% 
+  mutate(minutes = map2(start, end, to_vec)) -> min
+
+f <- function(a,b)
+  c(a,b)
+min %>% 
+  select(minutes) %>% 
+  accumulate(f) -> m
+
+vec <- unlist(m)
+as.data.frame(table(vec)) %>% arrange(desc(Freq))
+```
+
+# strategy 2:
+of all the guards who is asleep the most on the same minute
+
+
+```{r}
+un_ <- function(data)
+  as.data.frame(table(unlist(data))) %>% 
+  arrange(desc(Freq)) %>% 
+  head(1)
+
+df %>% 
+  mutate(start = minute(ts),
+         dur = ts - lag(ts),
+         dt =  lead(as.numeric(dur)),
+         end = start + dt) %>% 
+  filter(ev == 'falls asleep') %>%
+  select(guard,start,end) %>% 
+  mutate(minutes = map2(start, end, to_vec)) %>% 
+  select(guard,minutes) %>% 
+  group_by(guard) %>%
+  nest() %>% 
+  mutate(vec = map(data, un_)) %>% 
+  select(guard,vec) %>% 
+  unnest() %>% 
+  arrange(desc(Freq))
+```
+
+
