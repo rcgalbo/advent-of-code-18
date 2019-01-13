@@ -8,3 +8,4 @@ day 4: forever and I eneded up finishing it in R which was very good for this da
 day 5: did't take that long but the soluiton gives off by one errors because of the way that i wrote the iterator
 day 6: took too long but had better approach, still overcomplicated but less so
 day 7: took long and was mostly because I was willing to hack without datastructures and didn't read 60+ 
+day 8: took two days, very difficult for me to phrase recursively for some reason
