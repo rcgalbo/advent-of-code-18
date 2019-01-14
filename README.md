@@ -9,3 +9,4 @@ day 5: did't take that long but the soluiton gives off by one errors because of 
 day 6: took too long but had better approach, still overcomplicated but less so
 day 7: took long and was mostly because I was willing to hack without datastructures and didn't read 60+ 
 day 8: took two days, very difficult for me to phrase recursively for some reason
+day 9: took longer than I wanted but an improvement over the last one, silent failure and hidden state still need to work on 
