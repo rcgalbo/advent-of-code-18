@@ -28,7 +28,7 @@ assert make_grid(39)[196][217] == 0
 assert make_grid(57)[79][122] == -5
 
 
-def sum_nXn(grid: List[int], dim: Tuple[int] = (3,3)) -> List[int]:
+def sum_nXn(grid: List[int], dim: Tuple[int,int] = (3,3)) -> List[int]:
 
     sum_grid = [[0 for _ in range(300-dim[0])]
                     for Y in range(300-dim[1])]
@@ -45,7 +45,7 @@ tst_grid = make_grid(42)
 tst_sum = sum_nXn(tst_grid,(3,3))
 assert tst_sum[61][21] == 30
 
-def get_max_coord(grid: List[int]) -> Tuple[int]:
+def get_max_coord(grid: List[int]) -> Tuple[int, int]:
     coords = (0,0)
     max_val = 0
 
