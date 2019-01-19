@@ -80,5 +80,5 @@ for i in range(2,115):
     print(i, 'now', count_plants(geni), 'diff', count_plants(geni) - last)
 
 # converges to 23 after 111
-first111 = count_plants(geni)
+ifirst111 = count_plants(geni)
 rest = (50000000000 - 111) * 23
