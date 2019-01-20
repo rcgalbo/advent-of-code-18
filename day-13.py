@@ -84,6 +84,7 @@ def get_next(loc: Tuple[int, int], dir: str) -> Tuple[int, int]:
     return loc
 
 def check_collisions(track: List[str], carts: List[str]):
+    carts.sort(key = lambda x: (x.loc[1],x.loc[0]))
     collisions = []
     for a, b in combinations(carts,2):
         if a.loc == b.loc:
@@ -96,7 +97,6 @@ def check_collisions(track: List[str], carts: List[str]):
 
 def move(track, carts):
     for cart in carts:
-
         c_x, c_y = cart.loc
         track[c_y][c_x] = cart.last_track
 
@@ -173,7 +173,6 @@ print('part 2')
 with open('data/data-day13.txt') as f:
     track2 = read_track(f.read())
 carts2 = find_carts(track2)
-
 while len(carts2) > 1:
     track2 = move(track2, carts2)
     track2, carts2 = check_collisions(track2, carts2)
