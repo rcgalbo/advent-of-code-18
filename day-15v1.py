@@ -255,7 +255,7 @@ def pathfinder2(unit: 'Unit',
             unit_moves.append(move)
         
     if unit_moves:
-        unit_moves.sort(key=lambda x: (x[2], x[0], x[1]))
+        unit_moves.sort(key=lambda x: (x[0], x[1]))
         return unit_moves[0]
 
     g = Graph.build(empty)
@@ -289,6 +289,7 @@ def make_units(cave: 'Cave') -> List['Unit']:
 
 
 def get_unit(loc: Tuple[int, int], units: List['Unit']) -> Tuple[int, 'Unit']:
+    '''takes location and list of unit returns index and unit'''
     for i, unit in enumerate(units):
         if unit.pos == loc:
             return i, unit
@@ -297,11 +298,13 @@ def get_unit(loc: Tuple[int, int], units: List['Unit']) -> Tuple[int, 'Unit']:
 def get_weakest(coords: List[Tuple[int, int]],
                 units: List['Units']) -> Tuple[int, int]:
     potentials = [u for u in units if u.pos in coords if u.hp >= 0]
-    potentials.sort(key=lambda x: x.hp)
+    potentials.sort(key=lambda x: (x.hp, x.pos[0], x.pos[1]))
     if not potentials:
         return (-1, -1)
     return potentials[0].pos
 
+def total_hp(units):
+    return sum(u.hp for hp in units if u.hp > 0)
 
 def engaged(unit: 'Unit', units: List['Unit'], cave: 'Cave') -> 'Unit':
 
@@ -386,6 +389,7 @@ def run(cave: 'Cave', units: List['Unit']) -> (List['Cave'], List['Unit']):
             # if fighting attack
             if unit.opponent != (-1, -1):
 
+                # check if fighting weakest adjacent unit
                 if unit.hp > 0:
                     j, opponent = get_unit(unit.opponent, units)
                     opponent.hp -= 3
@@ -537,9 +541,9 @@ if __name__ == '__main__':
     u = make_units(c)
 
     # part 1
-    with open('data/data-day15.txt') as f:
-        c = Cave(f.read())
-    u = make_units(c)
+    # with open('data/data-day15.txt') as f:
+    #     c = Cave(f.read())
+    # u = make_units(c)
 
     while True:
         c, u = run(c, u)
