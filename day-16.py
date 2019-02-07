@@ -1,4 +1,4 @@
-from typing import NamedTuple, List, Dict
+from typing import NamedTuple, List, Dict, Callable
 from collections import defaultdict
 from itertools import repeat
 from functools import partial
@@ -10,103 +10,119 @@ class Sample(NamedTuple):
     after: List[int]
     instruction: List[int]
 
+
 # addition
-def addr(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+def addr(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = before[a] + before[b]
-    return True if before == smp.after else False, before
+    return before
 
-def addi(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+
+def addi(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = before[a] + b
-    return True if before == smp.after else False, before
+    return before
 
-def mulr(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+
+def mulr(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = before[a] * before[b]
-    return True if before == smp.after else False, before
+    return before
 
-def muli(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+
+def muli(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = before[a] * b
-    return True if before == smp.after else False, before
+    return before
 
-def banr(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+
+def banr(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = before[a] & before[b]
-    return True if before == smp.after else False, before
+    return before
 
-def bani(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+
+def bani(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = before[a] & b
-    return True if before == smp.after else False, before
+    return before
 
-def borr(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+
+def borr(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = before[a] | before[b]
-    return True if before == smp.after else False, before
+    return before
 
 
-def bori(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+def bori(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = before[a] | b
-    return True if before == smp.after else False, before
+    return before
 
-def setr(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+
+def setr(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = before[a]
-    return True if before == smp.after else False, before
+    return before
 
-def seti(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+
+def seti(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = a
-    return True if before == smp.after else False, before
+    return before
 
-def gtir(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+
+def gtir(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = 1 if a > before[b] else 0
-    return True if before == smp.after else False, before
+    return before
 
-def gtri(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+
+def gtri(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = 1 if before[a] > b else 0
-    return True if before == smp.after else False, before
+    return before
 
-def gtrr(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+
+def gtrr(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = 1 if before[a] > before[b] else 0
-    return True if before == smp.after else False, before
+    return before
 
-def eqir(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+
+def eqir(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = 1 if a == before[b] else 0
-    return True if before == smp.after else False, before
+    return before
 
-def eqri(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+
+def eqri(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = 1 if before[a] == b else 0
-    return True if before == smp.after else False, before
+    return before
 
-def eqrr(smp: 'Sample') -> bool:
-    before = smp.before.copy()
-    a, b, c = smp.instruction[1:]
+
+def eqrr(before: List[int], instruction: List[int]) -> List[int]:
+    before = copy(before)
+    a, b, c = instruction[1:]
     before[c] = 1 if before[a] == before[b] else 0
-    return True if before == smp.after else False, before
+    return before
+
 
 ops = [
     addr,
@@ -126,6 +142,7 @@ ops = [
     eqri,
     eqrr,
 ]
+
 
 def read_samples(sample_str: str) -> List['Sample']:
     samples = []
@@ -147,42 +164,50 @@ def read_samples(sample_str: str) -> List['Sample']:
         samples.append(Sample(before, after, instruction))
     return samples
 
+
 test = Sample([3, 2, 1, 1], [3, 2, 2, 1], [9, 2, 1, 2])
+assert mulr(test.before, test.instruction) == test.after
+assert seti(test.before, test.instruction) == test.after
+assert addi(test.before, test.instruction) == test.after
 
-# assert mulr(test) == True
-# assert seti(test) == True
-# assert addi(test) == True
+# part 1 samples
+# apply all functions to the input count # >= 3
+# https://stackoverflow.com/questions/11736407/apply-list-of-functions-on-an-object-in-python
+def apply(f: Callable, a: 'Sample') -> bool:  # kinda currying
+    return f(a.before, a.instruction) == a.after
 
-# # part 1 samples
 
-# # apply all functions to the input count # >= 3
-# # https://stackoverflow.com/questions/11736407/apply-list-of-functions-on-an-object-in-python
-# def apply(f, a): # just currying
-#     return f(a)
-# assert sum(map(partial(apply, a=test), ops)) == 3
+assert sum(map(partial(apply, a=test), ops)) == 3
 
 with open('data/data-day16.txt') as f:
     samples, test_data = f.read().split('\n\n\n')
-samples = read_samples(samples)
 
-# number_match = [sum(map(partial(apply, a=smp), ops)) for smp in samples]
-# print(sum(n >= 3 for n in number_match))
+samples = read_samples(samples)
+number_match = [sum(map(partial(apply, a=smp), ops)) for smp in samples]
+print(sum(n >= 3 for n in number_match))
 
 # part 2 test
-
 test_data = [
-    [int(i) for i in test.split(' ') if i.isdigit()] for test in test_data.split('\n')
-][1:]
+    [int(i) for i in test.split(' ') if i.isdigit()]
+    for test in test_data.strip().split('\n')
+]
 
-# create mapping {num: function}
-def match_functions(samples, ops):
+
+def match_functions(
+    samples: List['Sample'], ops: List[Callable]
+) -> Dict[int, Callable]:
+    """create a mapping from operation number to function"""
     final = {}
     while True:
         matches = defaultdict(set)
         for smp in samples:
             id = smp.instruction[0]
             for f in ops:
-                if f(smp)[0] == True and id not in final.keys() and f not in final.values():
+                if (
+                    f(smp.before, smp.instruction) == smp.after
+                    and id not in final.keys()
+                    and f not in final.values()
+                ):
                     matches[id].add(f)
 
         for id in matches:
@@ -192,15 +217,17 @@ def match_functions(samples, ops):
         if len(matches.keys()) == 0:
             return final
 
+
 mapping = match_functions(samples, ops)
 
 # apply
-before = test_data[0]
-instruction = test_data[1]
-fn = 1 # seti
-after = before[0:instruction[]
-s = Sample(before, before , instruction)
-for t in test_data[2:]:
-    fn = s.instruction
-    f = mapping[fn]
-    s = Sample(t, f(s)[1], f(s)[1])
+first = [0, 0, 0, 0]
+inst = test_data[0]
+f = mapping[inst[0]]
+out = f(first, inst)
+
+for inst in test_data[1:]:
+    f = mapping[inst[0]]
+    out = f(out, inst)
+
+print(out[0])
